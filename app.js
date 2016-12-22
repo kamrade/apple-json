@@ -1,5 +1,6 @@
 var express = require('express');
 var helpers = require('./helpers');
+var options = require('./options');
 var app = express();
 const port = process.env.PORT || 3000;
 
@@ -7,8 +8,7 @@ var jsonRouter = express.Router();
 
 jsonRouter.route('/generate')
 	.get(function(req, res) {
-
-		var responseJson = helpers.fillValueStrict();
+		var responseJson = helpers.fillManyValuesStrict(options.object, options.presets, options.itemsCount);
 		res.json(responseJson);
 	});
 
