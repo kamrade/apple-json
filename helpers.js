@@ -6,26 +6,58 @@ var helpers = (function() {
 		return rand;
 	};
 
-	var fillValueStrict = function(options) {
-		// var result = { "a": 42 };
-		var result = {};
-		let patternObject = options.object || {};
+	var fillValueStrict = function(pattern, presets) {
+		let result = {};
+		let patternObject = pattern || {};
 		let patternKeys = Object.keys(patternObject);
-		console.log(patternKeys);
 
-		for(let j = 0, k = patternKeys.length; j < k; j++) {
-			if(typeof patternObject[ patternKeys[j] ]) {
-				result[patternKeys[j]] = fillValueStrict( patternObject[ patternKeys[j] ] );
+		for(let i = 0, l = patternKeys.length; i < l; i++) {
+
+			if(typeof patternObject[patternKeys[i]] === 'object'){
+				result[ patternKeys[i] ] = fillValueStrict( patternObject[patternKeys[i]], presets );
 			} else {
-				result[patternKeys[j]] = this.randomInteger(0, 100);
+
+				let currentKey = patternObject[patternKeys[i]];
+				if(presets[currentKey]){
+					var preset = presets[currentKey];
+				} else {
+					var preset = {
+						type: 'number',
+						range: [1, 100]
+					}
+				}
+
+				switch(preset.type) {
+					case 'number':
+						let min = preset.range[0];
+						let max = preset.range[1];
+						result[patternKeys[i]] = randomInteger(min, max);
+						break;
+					case 'select':
+						let selectFrom = preset.range;
+						result[patternKeys[i]] = selectFrom[randomInteger(0, selectFrom.length - 1)];
+				}
+
 			}
+		}
+
+		return result;
+	}
+
+	let fillManyValuesStrict = function(pattern, presets, count) {
+		let result = [];
+
+		for (let i = 0; i < count; i++) {
+			let res = fillValueStrict(pattern, presets);
+			result.push(res);
 		}
 		return result;
 	}
 
 	return {
 		randomInteger: randomInteger,
-		fillValueStrict: fillValueStrict
+		fillValueStrict: fillValueStrict,
+		fillManyValuesStrict: fillManyValuesStrict
 	};
 })();
 
