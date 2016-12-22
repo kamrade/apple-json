@@ -1,4 +1,3 @@
-var options = require('./options');
 var helpers = (function() {
 
 	var randomInteger = function(min, max) {
@@ -7,12 +6,19 @@ var helpers = (function() {
 		return rand;
 	};
 
-	var fillValueStrict = function() {
-		var result = { "a": 42 };
-		for (let i = 0, l = options.itemsCount || 1; i < l; i++) {
-			let patternObject = options.object || {};
-			let patternKeys = Object.keys(patternObject);
-			console.log(patternKeys);
+	var fillValueStrict = function(options) {
+		// var result = { "a": 42 };
+		var result = {};
+		let patternObject = options.object || {};
+		let patternKeys = Object.keys(patternObject);
+		console.log(patternKeys);
+
+		for(let j = 0, k = patternKeys.length; j < k; j++) {
+			if(typeof patternObject[ patternKeys[j] ]) {
+				result[patternKeys[j]] = fillValueStrict( patternObject[ patternKeys[j] ] );
+			} else {
+				result[patternKeys[j]] = this.randomInteger(0, 100);
+			}
 		}
 		return result;
 	}

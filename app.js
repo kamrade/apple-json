@@ -1,4 +1,5 @@
 var express = require('express');
+var options = require('./options');
 var helpers = require('./helpers');
 var app = express();
 const port = process.env.PORT || 3000;
@@ -8,7 +9,7 @@ var jsonRouter = express.Router();
 jsonRouter.route('/generate')
 	.get(function(req, res) {
 
-		var responseJson = helpers.fillValueStrict();
+		var responseJson = helpers.fillValueStrict(options);
 		res.json(responseJson);
 	});
 
@@ -19,7 +20,6 @@ jsonRouter.route('/generate')
 // 		res.redirect('http://' + req.hostname + req.url);
 // 	}
 // });
-
 
 app.use('/api', jsonRouter);
 
